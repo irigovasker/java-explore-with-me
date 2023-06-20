@@ -13,18 +13,18 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestController("/")
+@RestController
 @RequiredArgsConstructor
 public class StatsController {
     private final HitService hitService;
 
-    @PostMapping(value = "hit")
+    @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
     public EndpointHitDto createHit(@Valid @RequestBody EndpointHit hit) {
         return hitService.createHit(hit);
     }
 
-    @GetMapping(value = "stats")
+    @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
     public List<ViewStatsDto> getStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
