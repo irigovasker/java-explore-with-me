@@ -6,7 +6,6 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Builder
@@ -25,7 +24,6 @@ public class EndpointHit {
     @NotBlank(message = "uri is empty")
     private String uri;
     @NotNull(message = "ip is null")
-    @Pattern(regexp = "^(\\d{1,3}\\.){3}\\d{1,3}$", message = "wrong ip")
     private String ip;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "hit_at")
