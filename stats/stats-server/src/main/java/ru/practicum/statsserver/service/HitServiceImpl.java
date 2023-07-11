@@ -23,6 +23,9 @@ public class HitServiceImpl implements HitService {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> urls, boolean unique) {
+        if (start.isAfter(end) || start.isEqual(end)) {
+            throw new RuntimeException("start before end");
+        }
         if (urls == null) {
             if (unique) {
                 return repository.findUniqueStatsWithoutUris(start, end);
