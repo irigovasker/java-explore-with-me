@@ -301,6 +301,7 @@ public class EventServiceImpl implements EventService {
         getEventByIdOrElseThrow(eventId);
         commentService.deleteCommentByAdmin(eventId, commentId);
     }
+
     private Event getEventByIdOrElseThrow(long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " not found"));
