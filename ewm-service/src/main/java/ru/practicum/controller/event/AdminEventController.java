@@ -39,8 +39,12 @@ public class AdminEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public FullEventDto updateByAdmin(@PathVariable Long eventId,
-                                                      @RequestBody @Valid UpdateEventDto dto) {
+    public FullEventDto updateByAdmin(@PathVariable Long eventId, @RequestBody @Valid UpdateEventDto dto) {
         return eventsService.updateByAdmin(eventId, dto);
+    }
+
+    @DeleteMapping("/{eventId}/comment/{commentId}")
+    public void deleteComment(@PathVariable long eventId, @PathVariable long commentId) {
+        eventsService.deleteCommentByAdmin(eventId, commentId);
     }
 }

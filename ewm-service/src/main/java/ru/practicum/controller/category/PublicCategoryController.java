@@ -16,8 +16,8 @@ public class PublicCategoryController {
 
     @GetMapping
     public List<NewCategoryDto> findAllCategories(
-            @RequestParam(required = false, defaultValue = "0") Integer from,
-            @RequestParam(required = false, defaultValue = "10") Integer size) {
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "10") Integer size) {
         return categoryService.findAllCategories(PageRequest.of(from, size));
     }
 

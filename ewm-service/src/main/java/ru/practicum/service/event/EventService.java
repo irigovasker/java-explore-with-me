@@ -1,10 +1,7 @@
 package ru.practicum.service.event;
 
 import org.springframework.data.domain.PageRequest;
-import ru.practicum.dto.event.FullEventDto;
-import ru.practicum.dto.event.NewEventDto;
-import ru.practicum.dto.event.ShortEventDto;
-import ru.practicum.dto.event.UpdateEventDto;
+import ru.practicum.dto.event.*;
 import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.dto.request.ParticipationRequestDto;
@@ -36,4 +33,8 @@ public interface EventService {
                                            PageRequest pageRequest, HttpServletRequest request);
 
     EventRequestStatusUpdateResult changeRequestsStatus(long userId, long eventId, EventRequestStatusUpdateRequest dto);
+
+    CommentDto createComment(long userId, long eventId, CommentDto commentDto);
+
+    void deleteCommentByAdmin(long eventId, long commentId);
 }

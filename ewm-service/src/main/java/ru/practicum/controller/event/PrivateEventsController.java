@@ -5,10 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.event.FullEventDto;
-import ru.practicum.dto.event.NewEventDto;
-import ru.practicum.dto.event.ShortEventDto;
-import ru.practicum.dto.event.UpdateEventDto;
+import ru.practicum.dto.event.*;
 import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.dto.request.ParticipationRequestDto;
@@ -26,16 +23,14 @@ public class PrivateEventsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FullEventDto createEvent(@PathVariable("userId") Long userId,
-                                                    @RequestBody @Valid NewEventDto dto) {
+    public FullEventDto createEvent(@PathVariable("userId") Long userId, @RequestBody @Valid NewEventDto dto) {
         return eventsService.createEvent(userId, dto);
     }
 
     @GetMapping
-    public List<ShortEventDto> findEventsCreatedByUser(
-            @PathVariable("userId") Long userId,
-            @RequestParam(required = false, defaultValue = "0") Integer from,
-            @RequestParam(required = false, defaultValue = "10") Integer size) {
+    public List<ShortEventDto> findEventsCreatedByUser(@PathVariable("userId") Long userId,
+                                                       @RequestParam(defaultValue = "0") Integer from,
+                                                       @RequestParam(defaultValue = "10") Integer size) {
         return eventsService.getEventsCreatedByCreator(userId, PageRequest.of(from, size));
     }
 
@@ -47,14 +42,14 @@ public class PrivateEventsController {
 
     @PatchMapping("/{eventId}")
     public FullEventDto updateEventPrivate(@PathVariable("userId") Long userId,
-                                                           @PathVariable("eventId") Long eventId,
-                                                           @RequestBody @Valid UpdateEventDto dto) {
+                                           @PathVariable("eventId") Long eventId,
+                                           @RequestBody @Valid UpdateEventDto dto) {
         return eventsService.updateEventCreatedByCurrentUser(userId, eventId, dto);
     }
 
     @GetMapping("/{eventId}/requests")
     public List<ParticipationRequestDto> findRequestsMadeByUserForEvent(@PathVariable("userId") Long userId,
-                                                                                        @PathVariable("eventId") Long eventId) {
+                                                                        @PathVariable("eventId") Long eventId) {
         return eventsService.getRequestsMadeByUserForEvent(userId, eventId);
     }
 
@@ -64,5 +59,12 @@ public class PrivateEventsController {
             @PathVariable("eventId") Long eventId,
             @RequestBody EventRequestStatusUpdateRequest dto) {
         return eventsService.changeRequestsStatus(userId, eventId, dto);
+    }
+
+    @PostMapping("/{eventId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto createComment(@PathVariable("userId") Long userId, @PathVariable("eventId") Long eventId,
+                                    @RequestBody @Valid CommentDto commentDto) {
+        return eventsService.createComment(userId, eventId, commentDto);
     }
 }
