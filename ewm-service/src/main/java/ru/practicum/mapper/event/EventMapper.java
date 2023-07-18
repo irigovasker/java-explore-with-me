@@ -3,6 +3,7 @@ package ru.practicum.mapper.event;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.dto.category.NewCategoryDto;
+import ru.practicum.dto.event.CommentDto;
 import ru.practicum.dto.event.FullEventDto;
 import ru.practicum.dto.event.NewEventDto;
 import ru.practicum.dto.event.ShortEventDto;
@@ -18,30 +19,14 @@ import ru.practicum.model.location.Location;
 import ru.practicum.model.user.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class, LocationMapper.class})
 public interface EventMapper {
 
     default FullEventDto toEventFullDto(Event event) {
-        return FullEventDto.builder()
-                .id(event.getId())
-                .annotation(event.getAnnotation())
-                .category(toCategoryDto(event.getCategory()))
-                .confirmedRequests(event.getConfirmedRequests())
-                .createdOn(event.getCreatedOn())
-                .description(event.getDescription())
-                .eventDate(event.getEventDate())
-                .initiator(toShortUserDto(event.getInitiator()))
-                .location(toLocationDto(event.getLocation()))
-                .paid(event.getPaid())
-                .participantLimit(event.getParticipantLimit())
-                .publishedOn((event.getPublishedOn() == null) ? null : event.getPublishedOn())
-                .requestModeration(event.getRequestModeration())
-                .state(event.getState())
-                .title(event.getTitle())
-                .views(event.getViews())
-                .build();
+        return toEventFullDto(event, null);
     }
 
     default Event toEvent(NewEventDto newEventDto, Category category, User user, LocalDateTime dateTime) {
@@ -91,5 +76,27 @@ public interface EventMapper {
 
     default Location toLocation(LocationDto locationDto) {
         return Mappers.getMapper(LocationMapper.class).toLocation(locationDto);
+    }
+
+    default FullEventDto toEventFullDto(Event event, List<CommentDto> comments) {
+        return FullEventDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .category(toCategoryDto(event.getCategory()))
+                .confirmedRequests(event.getConfirmedRequests())
+                .createdOn(event.getCreatedOn())
+                .description(event.getDescription())
+                .eventDate(event.getEventDate())
+                .initiator(toShortUserDto(event.getInitiator()))
+                .location(toLocationDto(event.getLocation()))
+                .paid(event.getPaid())
+                .participantLimit(event.getParticipantLimit())
+                .publishedOn((event.getPublishedOn() == null) ? null : event.getPublishedOn())
+                .requestModeration(event.getRequestModeration())
+                .state(event.getState())
+                .title(event.getTitle())
+                .views(event.getViews())
+                .comments(comments)
+                .build();
     }
 }

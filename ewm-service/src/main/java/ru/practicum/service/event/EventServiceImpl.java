@@ -2,16 +2,12 @@ package ru.practicum.service.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
-import ru.practicum.dto.event.FullEventDto;
-import ru.practicum.dto.event.NewEventDto;
-import ru.practicum.dto.event.ShortEventDto;
-import ru.practicum.dto.event.UpdateEventDto;
+import ru.practicum.dto.event.*;
 import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.request.EventRequestStatusUpdateResult;
@@ -48,13 +44,13 @@ import static ru.practicum.util.Util.*;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@ComponentScan(basePackages = {"ru.practicum.statsclient"})
 public class EventServiceImpl implements EventService {
     private final StatsClient statsClient;
     private final EventMapper eventMapper;
     private final UserService userService;
     private final RequestMapper requestMapper;
     private final LocationMapper locationMapper;
+    private final CommentService commentService;
     private final CategoryService categoryService;
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
@@ -89,7 +85,7 @@ public class EventServiceImpl implements EventService {
 
     public FullEventDto getFullEventDtoByIdForPrivate(long userId, long eventId) {
         userService.getUserByIdOrElseThrow(userId);
-        return eventMapper.toEventFullDto(putViewsInEvent(getEventByIdOrElseThrow(eventId)));
+        return eventMapper.toEventFullDto(putViewsInEvent(getEventByIdOrElseThrow(eventId)), commentService.getComments(eventId));
     }
 
     @Transactional
@@ -293,6 +289,19 @@ public class EventServiceImpl implements EventService {
                 .build();
     }
 
+    @Transactional
+    public CommentDto createComment(long userId, long eventId, CommentDto commentDto) {
+        userService.getUserByIdOrElseThrow(userId);
+        getEventByIdOrElseThrow(eventId);
+        return commentService.createComment(userId, eventId, commentDto);
+    }
+
+    @Transactional
+    public void deleteCommentByAdmin(long eventId, long commentId) {
+        getEventByIdOrElseThrow(eventId);
+        commentService.deleteCommentByAdmin(eventId, commentId);
+    }
+
     private Event getEventByIdOrElseThrow(long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " not found"));
@@ -358,7 +367,6 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("Error. Datetime of event cannot be earlier than 2 hours after current time");
         }
     }
-
 
     private LocationDto getLocationFromDto(NewEventDto dto) {
         if (dto.getLocation() == null) {

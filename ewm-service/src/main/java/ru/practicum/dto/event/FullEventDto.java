@@ -10,6 +10,7 @@ import ru.practicum.model.event.State;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static ru.practicum.util.Util.YYYY_MM_DD_HH_MM_SS;
 
@@ -40,4 +41,5 @@ public class FullEventDto {
     @Length(min = 3, max = 120)
     private String title;
     private Long views;
+    private List<CommentDto> comments;
 }
